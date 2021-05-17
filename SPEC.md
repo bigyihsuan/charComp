@@ -8,7 +8,7 @@
 
 ## SVGs
 
-SVGs are expected to be square.
+SVGs are expected to be square. If not, they will be rescaled to be square before processing.
 
 ## JSONs
 
@@ -22,12 +22,12 @@ Each number in the sublists of the fields in `slots` is a float between 0 and 1,
 The top left corner is `[0,0]` and the bottom corner `[1,1]`.
 A pair of coordinates defines the top left and bottom right of the slot.
 
-## Program Input
+## Program Input/Output
 
-Input is a string containing Unicode "Ideographic Description Sequences" and letters corresponding to glyphs.
+```bash
+python3 charComp.py svgDirectory inputString outputFile
+```
 
-## Program Output
+Input is a directory `svgDirectory` to all SVGs with associated JSONs, and a string `inputString` containing Unicode "Ideographic Description Characters" and letters corresponding to glyphs.
 
-Output is an SVG containing the character as specified by the input string.
-
-## Progroun Output
+Output is an SVG containing the character as specified by the input string, outputed to the file `outputFile`.
