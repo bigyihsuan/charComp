@@ -1,0 +1,19 @@
+{
+    "name": "k",
+    "glyph": "k",
+    "offsets": {
+        "left-right": {},
+        "up-down": {},
+        "left-mid-right": {},
+        "up-mid-down": {},
+        "surround-full": {},
+        "surround-above": {},
+        "surround-below": {},
+        "surround-left": {},
+        "surround-right": {},
+        "surround-up-left": {},
+        "surround-up-right": {},
+        "surround-down-left": {},
+        "overlaid": {}
+    }
+}
