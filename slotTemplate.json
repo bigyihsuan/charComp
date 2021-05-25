@@ -2,9 +2,9 @@
     "name": "",
     "glyph": "",
     "slots": {
-        "component": {
-            "tl": { "x": 0, "y": 0 },
-            "br": { "x": 0, "y": 0 }
-        }
+        "component": [
+            { "x": 0, "y": 0 },
+            { "x": 0, "y": 0 }
+        ]
     }
 }

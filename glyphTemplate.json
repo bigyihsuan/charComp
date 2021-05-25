@@ -1,17 +1,20 @@
 {
     "name": "",
     "glyph": "",
-    "slots": [{
-            "tl": { "x": 0, "y": 0 },
-            "br": { "x": 0, "y": 0 }
-        },
-        {
-            "tl": { "x": 0, "y": 0 },
-            "br": { "x": 0, "y": 0 }
-        },
-        {
-            "tl": { "x": 0, "y": 0 },
-            "br": { "x": 0, "y": 0 }
-        }
-    ]
+    "offsets": {
+        "left-right": {},
+        "up-down": {},
+        "left-mid-right": {},
+        "up-mid-down": {},
+        "surround-full": {},
+        "surround-above": {},
+        "surround-below": {},
+        "surround-left": {},
+        "surround-right": {},
+        "surround-up-left": {},
+        "surround-up-right": {},
+        "surround-down-left": {},
+        "overlaid": {}
+    }
+
 }

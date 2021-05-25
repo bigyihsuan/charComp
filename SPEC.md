@@ -1,33 +1,37 @@
 # charComp specification
 
-## Terminology in this Spec
-* `glyph`: a single, indivisible input SVG.
-* `template`: a character form that can take multiple glyphs in slots.
-* `slot`: a rectangular box in a tamplate that contains a glyph.
-* `character`: a finished, outputted SVG that contains glyphs placed in a template.
+## Coordinates
 
-## SVGs
+Coordinates are JSON objects with labels `x: float` and `y: float`. The values are a fraction of the height and width of the image's size.
+`(0,0)` is defined as the top left corner of the image. `(1,1)` is defined as the bottom right of the image. `(0.5,0.5)` is the center of the image, at half the height and half the width.
 
-SVGs are expected to be square. If not, they will be rescaled to be square before processing.
+# Glyphs
 
-## JSONs
+* `name: str`
+* `glyph: str`
+* `offsets: obj` (optional)
 
-* `name`: string. the name of the template.
-* `glyph`: the unicode character representing this template.
-* `slots`: a JSON object. Each field in this object must be a list of lists of floats. The field names are the names f the slots. The innermost list is a pair of coordinates; more details below.
+Glyphs have a `name` and a `glyph` at minimum.
 
-## `slots` Coordinate System
+They can have an optional `offsets: obj` that contains custom offsets, defined in XY coordinates, for the other glyphs in a template.
 
-Each number in the sublists of the fields in `slots` is a float between 0 and 1, inclusive.
-The top left corner is `[0,0]` and the bottom corner `[1,1]`.
-A pair of coordinates defines the top left and bottom right of the slot.
-
-## Program Input/Output
-
-```bash
-python3 charComp.py svgDirectory inputString outputFile
+For example, let's have a template `up-down` with `2` slots, and a glyph with these offsets:
 ```
+"offsets": {
+    "up-down": [
+        { "x": -0.05, "y": 0.05 },
+        { "x": 0.3, "y": -0.1 }
+    ]
+}
+```
+This will move the other glyph left 0.05 and down 1 if this glyph is in the second slot, and the other glyph 0.3 right and 0.1 up if the glyph is in the first slot. (Note that uses a similar coordinate system, scaled from 0 to +/-1.)
 
-Input is a directory `svgDirectory` to all SVGs with associated JSONs, and a string `inputString` containing Unicode "Ideographic Description Characters" and letters corresponding to glyphs.
+# Templates
 
-Output is an SVG containing the character as specified by the input string, outputed to the file `outputFile`.
+* `name: str`
+* `glyph: str`
+* `slots: list`
+
+## Slots
+
+Slots are defined by a pair of XY coordinates, defining the top left and bottom right corners.
