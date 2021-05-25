@@ -97,12 +97,12 @@ def composeGlyphs(sideLength: float, scale: float, idc: str, *glyphs) -> svt.SVG
         tl = slots[slot][0]
         br = slots[slot][1]
         # calculate the tl corner of the slot
-        slotx = 1 + sideLength * tl['x']
-        sloty = 1 + sideLength * tl['y']
+        slotx = (1 + sideLength * tl['x']) * scale
+        sloty = (1 + sideLength * tl['y']) * scale
 
         # calculate the scaling for the glyph
-        xScale = scale * (br['x'] - tl['x'])
-        yScale = scale * (br['y'] - tl['y'])
+        xScale = (br['x'] - tl['x']) * scale
+        yScale = (br['y'] - tl['y']) * scale
 
         # apply the transformation of the current slot to the current glyph
         glyphRoot.moveto(slotx, sloty, scale_x=xScale, scale_y=yScale)
@@ -127,7 +127,7 @@ def composeGlyphs(sideLength: float, scale: float, idc: str, *glyphs) -> svt.SVG
 
     # place onto the character
     character.append(list(glyphRoots.values()))
-    global outputDir
+    # global outputDir
     # character.save(os.path.join(outputDir, idc + ''.join(glyphs) + ".svg"))
     return character
 
@@ -150,27 +150,40 @@ def composeMixed(sideLength: float, scale: float, idc: str, *glyphs) -> svt.SVGF
         glyphs = glyphs[:idcArity[idc]]
 
     template = getJson(idc)
-    character = svt.SVGFigure()
     glyphSvgs = list(glyphs)
     # get SVGs of all non-SVG glyphs
     glyphSvgs = [getSvg(g) if type(g) is str else g for g in glyphSvgs]
-    glyphRoots = [g.getroot() for g in glyphs]
+    glyphRoots = [g.getroot() for g in glyphSvgs]
+
+    character = svt.SVGFigure()
+    # set the character size
+    character.set_size((str(sideLength), str(sideLength)))
+    print(character.get_size())
 
     slots = template['slots']
-    for t in zip(slots, glyphs, glyphRoots):
-        slot = t[0]
-        glyph = t[1]
-        glyphRoot = t[2]
+    for t in zip(slots, glyphs, glyphRoots, glyphSvgs):
+        slot, glyph, glyphRoot, glyphSvg = t
         # get the top left and bottom right corners of the slot
         tl = slots[slot][0]
         br = slots[slot][1]
-        # calculate the tl corner of the slot
-        slotx = 1 + sideLength * tl['x']
-        sloty = 1 + sideLength * tl['y']
 
         # calculate the scaling for the glyph
-        xScale = scale * (br['x'] - tl['x'])
-        yScale = scale * (br['y'] - tl['y'])
+        # xScale = (br['x'] - tl['x']) * scale
+        xScale = (br['x'] - tl['x']) * scale
+        # yScale = (br['y'] - tl['y']) * scale
+        yScale = (br['y'] - tl['y']) * scale
+
+        # calculate the tl corner of the slot
+        # slotx = (1 + sideLength * tl['x']) * scale
+        slotx = tl['x'] * sideLength
+        # sloty = (1 + sideLength * tl['y']) * scale
+        sloty = tl['y'] * sideLength
+
+        print(glyphSvg.get_size(), (template['glyph'], glyph), (slotx, sloty), (xScale, yScale))
+
+        if float(glyphSvg.get_size()[0]) < sideLength and any(type(x) is svt.SVGFigure for x in glyphs):
+            xScale *= sideLength / float(glyphSvg.get_size()[0]) * 4
+            yScale *= sideLength / float(glyphSvg.get_size()[1]) * 4
 
         # apply the transformation of the current slot to the current glyph
         glyphRoot.moveto(slotx, sloty, scale_x=xScale, scale_y=yScale)
@@ -180,9 +193,10 @@ def composeMixed(sideLength: float, scale: float, idc: str, *glyphs) -> svt.SVGF
 
     # place onto the character
     character.append(glyphRoots)
-    # global outputDir
-    # import random
-    # character.save(os.path.join(outputDir, str(int(random.random() * 100)) + ".svg"))
+
+    # if nesting != None:
+    #     global outputDir
+    #     character.save(os.path.join(outputDir, str(nesting) + ".svg"))
     return character
 
 
@@ -201,10 +215,10 @@ def compose(sideLength: float, scale: float, inputTree: list) -> svt.SVGFigure:
         # print('for:', tup)
         # base case: inputTree has only glyphs in its list
         possibleTuples = list(filter(lambda e: type(e) is tuple, tup[1]))
-        print(len(possibleTuples))
+        # print(len(possibleTuples))
         if len(possibleTuples) == 0:
-            print('base')
-            return composeGlyphs(sideLength, scale, tup[0], *tup[1])
+            # print('base')
+            return composeMixed(sideLength, scale * 8, tup[0], *tup[1])
 
         # recursive case: inputTree has tuples
         tup = list(tup)
@@ -240,6 +254,6 @@ inputTree = parseInputString(inputStr)
 # for t in inputTree:
 #     pp.pprint(t)
 
-compose(320, 8, inputTree).save(os.path.join(outputDir, inputStr + ".svg"))
+compose(320, 1, inputTree).save(os.path.join(outputDir, inputStr + ".svg"))
 
 exit(0)
